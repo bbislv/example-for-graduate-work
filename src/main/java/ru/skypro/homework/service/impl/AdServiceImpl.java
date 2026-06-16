@@ -15,6 +15,7 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AccessChecker;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.ImageService;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class AdServiceImpl implements AdService {
     private final UserRepository userRepository;
     private final AdMapper adMapper;
     private final AccessChecker accessChecker;
+    private final ImageService imageService;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,6 +56,7 @@ public class AdServiceImpl implements AdService {
         ru.skypro.homework.entity.User author = getUserEntity(email);
         ru.skypro.homework.entity.Ad ad = adMapper.toEntity(createOrUpdateAd);
         ad.setAuthor(author);
+        ad.setImage(imageService.uploadImage(image));
         return adMapper.toDto(adRepository.save(ad));
     }
 
@@ -73,6 +76,7 @@ public class AdServiceImpl implements AdService {
         ru.skypro.homework.entity.User currentUser = getUserEntity(email);
         ru.skypro.homework.entity.Ad ad = getAdEntity(id);
         accessChecker.checkAdAccess(ad, currentUser);
+        imageService.deleteImageByPath(ad.getImage());
         commentRepository.deleteAll(commentRepository.findAllByAdId(id));
         adRepository.delete(ad);
     }
@@ -83,6 +87,10 @@ public class AdServiceImpl implements AdService {
         ru.skypro.homework.entity.User currentUser = getUserEntity(email);
         ru.skypro.homework.entity.Ad ad = getAdEntity(id);
         accessChecker.checkAdAccess(ad, currentUser);
+        String oldImage = ad.getImage();
+        ad.setImage(imageService.uploadImage(image));
+        adRepository.save(ad);
+        imageService.deleteImageByPath(oldImage);
     }
 
     private ru.skypro.homework.entity.Ad getAdEntity(Integer id) {

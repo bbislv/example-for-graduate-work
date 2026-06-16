@@ -26,6 +26,7 @@ public final class EntityConstants {
     public static final String TABLE_USERS = "users";
     public static final String TABLE_ADS = "ads";
     public static final String TABLE_COMMENTS = "comments";
+    public static final String TABLE_IMAGES = "images";
 
     private EntityConstants() {
     }
