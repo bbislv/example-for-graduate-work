@@ -45,6 +45,7 @@ public class WebSecurityConfig {
                 .disable()
                 .authorizeHttpRequests(authorization -> authorization
                         .mvcMatchers(AUTH_WHITELIST).permitAll()
+                        .mvcMatchers(HttpMethod.GET, "/images/**").permitAll()
                         .mvcMatchers(HttpMethod.GET, "/ads").permitAll()
                         .mvcMatchers(HttpMethod.POST, "/ads/**").hasAnyRole("USER", "ADMIN")
                         .mvcMatchers(HttpMethod.PATCH, "/ads/**").hasAnyRole("USER", "ADMIN")

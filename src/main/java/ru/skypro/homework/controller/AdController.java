@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,7 @@ public class AdController {
     public ResponseEntity<Ad> addAd(
             Authentication authentication,
             @RequestPart("properties") CreateOrUpdateAd properties,
-            @RequestPart("image") MultipartFile image) {
+            @RequestParam("image") MultipartFile image) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(adService.createAd(authentication.getName(), properties, image));
     }
@@ -106,7 +107,7 @@ public class AdController {
     public ResponseEntity<Void> updateImage(
             Authentication authentication,
             @PathVariable("id") Integer id,
-            @RequestPart("image") MultipartFile image) {
+            @RequestParam("image") MultipartFile image) {
         adService.updateAdImage(id, authentication.getName(), image);
         return ResponseEntity.ok().build();
     }

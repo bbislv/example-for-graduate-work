@@ -6,6 +6,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,5 +26,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Void> handleNotFound(ResourceNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @ExceptionHandler(InvalidImageException.class)
+    public ResponseEntity<Void> handleInvalidImage(InvalidImageException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @ExceptionHandler({
+            MultipartException.class,
+            MissingServletRequestPartException.class,
+            MaxUploadSizeExceededException.class
+    })
+    public ResponseEntity<Void> handleMultipartException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }

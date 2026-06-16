@@ -3,10 +3,12 @@ package ru.skypro.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 @Service
@@ -17,6 +19,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ImageService imageService;
 
     @Override
     @Transactional(readOnly = true)
@@ -39,8 +42,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateCurrentUserImage(String email) {
-        getUserEntity(email);
+    public void updateCurrentUserImage(String email, MultipartFile image) {
+        ru.skypro.homework.entity.User user = getUserEntity(email);
+        String oldImage = user.getImage();
+        user.setImage(imageService.uploadImage(image));
+        userRepository.save(user);
+        imageService.deleteImageByPath(oldImage);
     }
 
     private ru.skypro.homework.entity.User getUserEntity(String email) {
